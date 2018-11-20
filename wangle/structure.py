@@ -19,30 +19,12 @@ class Part:
     def clone(self):
         return Part(self.text, self.word_id)
 
-class SentenceVersion:
-    def __init__(self):
-        self.parts = []
-        self.properties = {}
-
-    def clone(self):
-        result = SentenceVersion()
-
-        for part in self.parts:
-            result.parts.append(part.clone())
-
-        for word_id, prop_dict in self.properties.items():
-            result.properties[word_id] = {}
-            for prop_name, prop in prop_dict.items():
-                result.properties[word_id][prop_name] = prop.clone()
-
-        return result
-
 class Sentence:
     def __init__(self):
         self._word_id_seed = 1
         self.words = {}
-        self.current = SentenceVersion()
-        self.versions = [self.current]
+        self.parts = []
+        self.properties = {}
 
     def register_word(self, lemma):
         word = Word(self._word_id_seed, lemma)
@@ -53,45 +35,42 @@ class Sentence:
     def add_word(self, word_id, text, position=None):
         part = Part(text, word_id)
         if position is None:
-            position = len(self.current.parts)
-        self.current.parts.insert(position, part)
+            position = len(self.parts)
+        self.parts.insert(position, part)
 
     def set_property(self, word_id, name, complement=None):
-        if word_id not in self.current.properties:
-            self.current.properties[word_id] = {}
-        self.current.properties[word_id][name] = Property(name, complement=complement)
+        if word_id not in self.properties:
+            self.properties[word_id] = {}
+        self.properties[word_id][name] = Property(name, complement=complement)
 
     def has_property(self, word_id, name):
-        return word_id in self.current.properties and name in self.current.properties[word_id]
+        return word_id in self.properties and name in self.properties[word_id]
 
     def find_words_by_property(self, name, complement=None):
         result = []
-        for word_id in self.current.properties:
-            for name in self.current.properties[word_id]:
-                if complement is None or complement == self.current.properties[word_id][name].complement:
+        for word_id in self.properties:
+            for name in self.properties[word_id]:
+                if complement is None or complement == self.properties[word_id][name].complement:
                     result.append(self.words[word_id])
                     break
         return result
 
     def get_property(self, word_id, name):
-        if word_id in self.current.properties and name in self.current.properties[word_id]:
-            return self.current.properties[word_id][name]
+        if word_id in self.properties and name in self.properties[word_id]:
+            return self.properties[word_id][name]
 
     def get_property_complement(self, word_id, name):
-        if word_id in self.current.properties and name in self.current.properties[word_id]:
-            return self.current.properties[word_id][name].complement
+        if word_id in self.properties and name in self.properties[word_id]:
+            return self.properties[word_id][name].complement
 
     def render(self):
         result = ""
-        for i, part in enumerate(self.current.parts):
+        for i, part in enumerate(self.parts):
             # add space between two words
             if i > 0:
-                prev = self.current.parts[i - 1]
+                prev = self.parts[i - 1]
                 if prev.word_id is not None and part.word_id is not None:
                     result += " "
             result += part.text
 
         return result
-
-    def create_snapshot(self):
-        self.versions.append(self.current.clone())

@@ -54,7 +54,7 @@ class Sentence(structure.Sentence):
 
     def determine_declension_parameters(self):
         # for adjectives, derive gender and plurality from the word that it modifies
-        for part in self.current.parts:
+        for part in self.parts:
             if part.word_id is not None:
                 word = self.words[part.word_id]
                 if self.has_property(word.id, "adjective") and self.has_property(word.id, "modifies"):
@@ -67,7 +67,7 @@ class Sentence(structure.Sentence):
                         self.set_property(word.id, "is_plural", complement=is_plural)
 
     def determine_conjugation_parameters(self):
-        for part in self.current.parts:
+        for part in self.parts:
             if part.word_id is not None:
                 word = self.words[part.word_id]
                 if self.has_property(word.id, "finite_verb"):
@@ -90,7 +90,7 @@ class Sentence(structure.Sentence):
 
     def inflect(self):
         self.determine_declension_parameters()
-        for part in self.current.parts:
+        for part in self.parts:
             if part.word_id is not None:
                 word = self.words[part.word_id]
                 if self.has_property(word.id, "adjective"):
@@ -103,7 +103,7 @@ class Sentence(structure.Sentence):
                     part.text = self.decliner.decline(word.lemma, gender == "masc", is_plural)
 
         self.determine_conjugation_parameters()
-        for part in self.current.parts:
+        for part in self.parts:
             if part.word_id is not None:
                 word = self.words[part.word_id]
                 if self.has_property(word.id, "finite_verb") and self.has_property(word.id, "conj_group"):
@@ -115,10 +115,10 @@ class Sentence(structure.Sentence):
 
     def contract(self):
         i = 0
-        while i < len(self.current.parts) - 1:
-            part = self.current.parts[i]
-            next_part = self.current.parts[i + 1]
+        while i < len(self.parts) - 1:
+            part = self.parts[i]
+            next_part = self.parts[i + 1]
             if part.text in ["je", "me", "te", "se", "le", "la"] and next_part.text[0] in "aâeéèêhiîïoôuy":
                 part.text = part.text[0]
-                self.current.parts.insert(i + 1, structure.Part("'"))
+                self.parts.insert(i + 1, structure.Part("'"))
             i += 1
