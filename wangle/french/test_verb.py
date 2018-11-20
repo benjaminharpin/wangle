@@ -32,7 +32,6 @@ class Tests(unittest.TestCase):
                 self.assertEqual(v.get_tag_value("conj_mood"), mood)
                 self.assertEqual(v.get_tag_value("conj_tense"), tense)
 
-
     def test_single_aux_compound_tense_labelling(self):
         test_case = [
             ("indicatif", "passé composé", "présent"),
@@ -69,6 +68,77 @@ class Tests(unittest.TestCase):
                 self.assertEqual(pp.get_tag_value("tense"), tense)
                 self.assertTrue(pp.has_tag("past_participle"))
                 self.assertFalse(pp.has_tag("finite_verb"))
+
+    def test_vandertramp_verbs_use_être_aux(self):
+        test_cases = [
+            ("indicatif", "passé composé", "présent"),
+            ("indicatif", "plus-que-parfait", "imparfait"),
+            ("indicatif", "passé anterieur", "passé simple"),
+            ("indicatif", "futur anterieur", "futur"),
+            ("conditionnel", "passé", "présent"),
+            ("subjonctif", "passé", "présent"),
+            ("subjonctif", "plus-que-parfait", "passé simple"),
+        ]
+        vandertramp_lemmas = [
+            "devenir", 
+            "revenir,",
+            "monter",
+            "rester",
+            "sortir",
+            "venir",
+            "aller",
+            "naître",
+            "descendre",
+            "entrer",
+            "retourner",
+            "tomber",
+            "rentrer",
+            "arriver",
+            "mourir",
+            "partir"
+        ]
+        for lemma in vandertramp_lemmas:
+            for mood, tense, aux_tense in test_cases:
+                with self.subTest(mood=mood, tense=tense):
+                    s = Sentence()
+                    p = add_subject_pronoun(s, "je")
+                    v = add_finite_verb(s, lemma, p.id, mood=mood, tense=tense)
+                    s.inflect()
+
+                    aux = s.tokens[1]
+
+                    self.assertEqual(aux.lemma, "être")
+
+    def test_être_aux_override(self):
+        test_cases = [
+            ("indicatif", "passé composé", "présent"),
+            ("indicatif", "plus-que-parfait", "imparfait"),
+            ("indicatif", "passé anterieur", "passé simple"),
+            ("indicatif", "futur anterieur", "futur"),
+            ("conditionnel", "passé", "présent"),
+            ("subjonctif", "passé", "présent"),
+            ("subjonctif", "plus-que-parfait", "passé simple"),
+        ]
+        for mood, tense, aux_tense in test_cases:
+            with self.subTest(mood=mood, tense=tense):
+                s = Sentence()
+                p = add_subject_pronoun(s, "je")
+                v = add_finite_verb(s, "demeurer", p.id, mood=mood, tense=tense)
+                s.inflect()
+
+                aux = s.tokens[1]
+
+                self.assertEqual(aux.lemma, "avoir")
+        for mood, tense, aux_tense in test_cases:
+            with self.subTest(mood=mood, tense=tense):
+                s = Sentence()
+                p = add_subject_pronoun(s, "je")
+                v = add_finite_verb(s, "demeurer", p.id, mood=mood, tense=tense, aux_lemma="être")
+                s.inflect()
+
+                aux = s.tokens[1]
+
+                self.assertEqual(aux.lemma, "être")
 
     def test_présent_inflection(self):
         conjugations = [
