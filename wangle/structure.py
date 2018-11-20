@@ -1,3 +1,13 @@
+def render_tokens(tokens):
+    result = ""
+    for i, token in enumerate(tokens):
+        # add space between two words
+        if i > 0 and isinstance(token, Word) and isinstance(tokens[i - 1], Word):
+            result += " "
+        result += str(token)
+
+    return result
+
 class Tag:
     def __init__(self, tag_name, value=None):
         self.tag_name = tag_name
@@ -46,15 +56,9 @@ class Sentence:
                     break
         return result
 
-    def __str__(self):
-        result = ""
-        for i, token in enumerate(self.tokens):
-            # add space between two words
-            if i > 0 and isinstance(token, Word) and isinstance(self.tokens[i - 1], Word):
-                result += " "
-            result += str(token)
 
-        return result
+    def __str__(self):
+        return render_tokens(self.tokens)
 
     def __repr__(self):
         result = ""
