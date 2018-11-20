@@ -35,7 +35,33 @@ def add_finite_verb(sentence, lemma, subject_id, mood="indicatif", tense="prése
             verb.set_tag("conj_mood", value=mood)
             verb.set_tag("conj_tense", value=tense)
             finite_verb = verb
-        if tense == "passé composé":
+        if tense in ["passé composé", "plus-que-parfait", "passé anterieur", "futur anterieur"]:
+            aux_lemma = "avoir"
+            if verb.lemma in verbs_that_conjugate_with_etre:
+                aux_lemma = "être"
+            aux = sentence.register_word(aux_lemma)
+            aux.set_tag("verb")
+            aux.set_tag("conj_mood", value=mood)
+            aux_tense = None
+            if tense == "passé composé":
+                aux_tense = "présent"
+            elif tense == "plus-que-parfait":
+                aux_tense = "imparfait"
+            elif tense == "passé anterieur":
+                aux_tense = "passé simple"
+            elif tense == "futur anterieur":
+                aux_tense = "futur"
+            aux.set_tag("conj_tense", value=aux_tense)
+            aux.set_tag("aux_for", value=verb.id)
+            finite_verb = aux 
+            verb.set_tag("past_participle")
+            pp = verb
+    elif mood == "conditionnel":
+        if tense in ["présent"]:
+            verb.set_tag("conj_mood", value=mood)
+            verb.set_tag("conj_tense", value=tense)
+            finite_verb = verb
+        if tense == "passé":
             aux_lemma = "avoir"
             if verb.lemma in verbs_that_conjugate_with_etre:
                 aux_lemma = "être"
@@ -43,6 +69,28 @@ def add_finite_verb(sentence, lemma, subject_id, mood="indicatif", tense="prése
             aux.set_tag("verb")
             aux.set_tag("conj_mood", value=mood)
             aux.set_tag("conj_tense", value="présent")
+            aux.set_tag("aux_for", value=verb.id)
+            finite_verb = aux 
+            verb.set_tag("past_participle")
+            pp = verb
+    elif mood == "subjonctif":
+        if tense in ["présent", "imparfait"]:
+            verb.set_tag("conj_mood", value=mood)
+            verb.set_tag("conj_tense", value=tense)
+            finite_verb = verb
+        if tense in ["passé", "plus-que-parfait"]:
+            aux_lemma = "avoir"
+            if verb.lemma in verbs_that_conjugate_with_etre:
+                aux_lemma = "être"
+            aux = sentence.register_word(aux_lemma)
+            aux.set_tag("verb")
+            aux.set_tag("conj_mood", value=mood)
+            aux_tense = None
+            if tense == "passé":
+                aux_tense = "présent"
+            elif tense == "plus-que-parfait":
+                aux_tense = "passé simple"
+            aux.set_tag("conj_tense", value=aux_tense)
             aux.set_tag("aux_for", value=verb.id)
             finite_verb = aux 
             verb.set_tag("past_participle")
