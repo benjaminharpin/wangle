@@ -1,30 +1,35 @@
+class Tag:
+    def __init__(self, tag_name, value=None):
+        self.tag_name = tag_name
+        self.value = value
+
+    def clone(self):
+        return Tag(self.name, complement=self.complement)
+
 class Word:    
     def __init__(self, id, lemma):
         self.id = id
         self.lemma = lemma
+        self.inflection = lemma 
+        self.tags = {}
 
-class Property:
-    def __init__(self, name, complement=None):
-        self.name = name
-        self.complement = complement
+    def set_tag(self, tag_name, value=None):
+        self.tags[tag_name] = Tag(tag_name, value)
 
-    def clone(self):
-        return Property(self.name, complement=self.complement)
+    def has_tag(self, tag_name):
+        return tag_name in self.tags
 
-class Part:
-    def __init__(self, text, word_id=None):
-        self.text = text 
-        self.word_id = word_id
+    def get_tag_value(self, tag_name):
+        return self.tags[tag_name].value
 
-    def clone(self):
-        return Part(self.text, self.word_id)
+    def __str__(self):
+        return self.inflection
 
 class Sentence:
     def __init__(self):
         self._word_id_seed = 1
+        self.tokens = []
         self.words = {}
-        self.parts = []
-        self.properties = {}
 
     def register_word(self, lemma):
         word = Word(self._word_id_seed, lemma)
@@ -32,45 +37,35 @@ class Sentence:
         self._word_id_seed += 1
         return word
 
-    def add_word(self, word_id, text, position=None):
-        part = Part(text, word_id)
-        if position is None:
-            position = len(self.parts)
-        self.parts.insert(position, part)
-
-    def set_property(self, word_id, name, complement=None):
-        if word_id not in self.properties:
-            self.properties[word_id] = {}
-        self.properties[word_id][name] = Property(name, complement=complement)
-
-    def has_property(self, word_id, name):
-        return word_id in self.properties and name in self.properties[word_id]
-
-    def find_words_by_property(self, name, complement=None):
+    def find_words_by_tag(self, tag_name, value=None):
         result = []
-        for word_id in self.properties:
-            for name in self.properties[word_id]:
-                if complement is None or complement == self.properties[word_id][name].complement:
-                    result.append(self.words[word_id])
+        for word in self.words.values():
+            if tag_name in word.tags:
+                if value is None or value == word.tags[tag_name].value:
+                    result.append(word)
                     break
         return result
 
-    def get_property(self, word_id, name):
-        if word_id in self.properties and name in self.properties[word_id]:
-            return self.properties[word_id][name]
-
-    def get_property_complement(self, word_id, name):
-        if word_id in self.properties and name in self.properties[word_id]:
-            return self.properties[word_id][name].complement
-
-    def render(self):
+    def __str__(self):
         result = ""
-        for i, part in enumerate(self.parts):
+        for i, token in enumerate(self.tokens):
             # add space between two words
-            if i > 0:
-                prev = self.parts[i - 1]
-                if prev.word_id is not None and part.word_id is not None:
-                    result += " "
-            result += part.text
+            if i > 0 and isinstance(token, Word) and isinstance(self.tokens[i - 1], Word):
+                result += " "
+            result += str(token)
 
+        return result
+
+    def __repr__(self):
+        result = ""
+        for i, token in enumerate(self.tokens):
+            if isinstance(token, Word):
+                result += "{}: {} -> {}\n".format(token.id, token.lemma, token.inflection)
+                for tag_name in token.tags:
+                    if token.tags[tag_name].value is None:
+                        result += "\t{}\n".format(tag_name)
+                    else:
+                        result += "\t{}: {}\n".format(tag_name, token.tags[tag_name].value)
+            else:
+                result += "{}\n".format(token)
         return result
