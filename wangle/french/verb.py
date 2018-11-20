@@ -109,9 +109,10 @@ def add_finite_verb(sentence, lemma, subject_id, mood="indicatif", tense="prése
         sentence.tokens.append(verb)
 
     if finite_verb is not None:
-        finite_verb.set_tag("finite_verb")
         subj = sentence.words[subject_id]
-        subj.set_tag("subject_for", finite_verb.id)
+        subj.set_tag("subject_for", verb.id)
+        finite_verb.set_tag("finite_verb")
+        finite_verb.set_tag("agrees_with", subj.id)
 
     if pp is not None and aux.lemma == "être":
         pp.set_tag("agrees_with", subj.id)
@@ -120,10 +121,9 @@ def add_finite_verb(sentence, lemma, subject_id, mood="indicatif", tense="prése
 
 def conjugate(sentence, verb):
     if verb.has_tag("finite_verb"):
-        # TODO: if this is an auxiliary we will have to find the subject from the parent
-        subjects = sentence.find_words_by_tag("subject_for", value=verb.id)
-        if any(subjects):
-            subject = subjects[0]
+        subject = None
+        if verb.has_tag("agrees_with"):
+            subject = sentence.words[verb.get_tag_value("agrees_with")]
             conj_group = None
             if subject.lemma == "je":
                 conj_group = "S1"
