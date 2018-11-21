@@ -12,8 +12,8 @@ pénétrer:pénètre,pénètres,pénètre,pénétrons,pénétrez,pénètrent
 dépecer:dépèce,dépèces,dépèce,dépeçons,dépecez,dépècent
 rapiécer:rapièce,rapièces,rapièce,rapiéçons,rapiécez,rapiècent
 protéger:protège,protèges,protège,protégeons,protégez,protègent
-employer:employe,employes,employe,employons,employez,employent
-essuyer:essuye,essuyes,essuye,essuyons,essuyez,essuyent
+employer:emploie,emploies,emploie,employons,employez,emploient
+essuyer:essuie,essuies,essuie,essuyons,essuyez,essuient
 payer:paye,payes,paye,payons,payez,payent
 envoyer:envoye,envoyes,envoye,envoyons,envoyez,envoyent
 finir:finis,finis,finit,finissons,finissez,finissent
