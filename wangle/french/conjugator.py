@@ -196,7 +196,10 @@ def calculate_présent_stem(lemma, model, subject_group):
     if stem is None:
         return None
 
-    if model == 'finir' or model == 'haïr':
+    if model == 'employer':
+        if subject_group in ['S1', 'S2', 'S3', 'P3']:
+            stem = stem[:-1] + 'i'
+    elif model == 'finir' or model == 'haïr':
         if subject_group in ['S1', 'S2', 'S3']:
             stem += 'i'
         elif model == 'haïr':
