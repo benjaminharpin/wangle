@@ -15,7 +15,7 @@ protéger:protège,protèges,protège,protégeons,protégez,protègent
 employer:emploie,emploies,emploie,employons,employez,emploient
 essuyer:essuie,essuies,essuie,essuyons,essuyez,essuient
 payer:paye,payes,paye,payons,payez,payent
-envoyer:envoye,envoyes,envoye,envoyons,envoyez,envoyent
+envoyer:envoie,envoies,envoie,envoyons,envoyez,envoient
 finir:finis,finis,finit,finissons,finissez,finissent
 maudire:maudis,maudis,maudit,maudissons,maudissez,maudissent
 haïr:hais,hais,hait,haïssons,haïssez,haïssent

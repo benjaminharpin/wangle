@@ -196,7 +196,7 @@ def calculate_présent_stem(lemma, model, subject_group):
     if stem is None:
         return None
 
-    if model == 'employer':
+    if model in ['employer', 'envoyer']:
         if subject_group in ['S1', 'S2', 'S3', 'P3']:
             stem = stem[:-1] + 'i'
     elif model == 'finir' or model == 'haïr':
@@ -957,5 +957,109 @@ def calculate_passé_simple(lemma, subject_group):
         index = result.rfind('g')
         if 0 <= index and index + 1 < len(result) and result[index + 1] in ['a', 'â']:
             result = result[:index] + 'ge' + result[index + 1:]
+
+    return result
+
+def calculate_subjonctif_présent_stem(lemma, model, subject_group):
+    if lemma == 'être':
+        if subject_group in ['S1', 'S2', 'S3', 'P3']:
+            return 'soi'
+        else:
+            return 'soy'
+    elif lemma == 'avoir':
+        if subject_group in ['S1', 'S2', 'S3', 'P3']:
+            return 'ai'
+        else:
+            return 'ay'
+    elif lemma == 'savoir':
+        return 'sach'
+    elif lemma == 'pouvoir':
+        return 'puiss'
+    elif lemma == 'aller' and subject_group in ['S1', 'S2', 'S3', 'P3']:
+        return 'aill'
+    elif lemma == 'falloir':
+        return 'faill'
+    elif lemma == 'vouloir' and subject_group in ['S1', 'S2', 'S3', 'P3']:
+        return 'veuill'
+    elif model == 'faire':
+        return lemma[:-3] + 'ss'
+    elif model == 'valoir' and subject_group in ['S1', 'S2', 'S3', 'P3']:
+        return lemma[:-4] + 'ill'
+    elif subject_group in ['S1', 'S2', 'S3', 'P3']:
+        return calculate_présent_stem(lemma, model, 'P3')
+    else:
+        return calculate_présent_stem(lemma, model, 'P1')
+
+def calculate_subjonctif_présent_suffix(model, subject_group):
+    suffix = ''
+    if model == 'être':
+        if subject_group == 'S1':
+            return 's'
+        elif subject_group == 'S2':
+            return 's'
+        elif subject_group == 'S3':
+            return 't'
+        elif subject_group == 'P1':
+            return 'ons'
+        elif subject_group == 'P2':
+            return 'ez'
+    elif model == 'avoir':
+        if subject_group == 'S3':
+            return 't'
+        elif subject_group == 'P1':
+            return 'ons'
+        elif subject_group == 'P2':
+            return 'ez'
+
+    if subject_group == 'S1':
+        suffix = 'e'
+    elif subject_group == 'S2':
+        suffix = 'es'
+    elif subject_group == 'S3':
+        suffix = 'e'
+    elif subject_group == 'P1':
+        suffix = 'ions'
+    elif subject_group == 'P2':
+        suffix = 'iez'
+    elif subject_group == 'P3':
+        suffix = 'ent'
+
+    return suffix
+
+def calculate_subjonctif_présent(lemma, subject_group):
+    model = calculate_lemma_model(lemma)
+
+    stem = calculate_subjonctif_présent_stem(lemma, model, subject_group)
+    if stem is None:
+        return None
+
+    suffix = calculate_subjonctif_présent_suffix(model, subject_group)
+    if suffix is None:
+        return None
+
+    # apply consonant doubling if required
+    if model in ['appeler', 'jeter'] and suffix in ['e', 'es', 'ent']:
+        stem += stem[-1]
+
+    # do e -> è replacement if required
+    if model in ['peser', 'dépecer'] and suffix in ['e', 'es', 'ent']:
+        index = stem.rfind('e')
+        if 0 <= index < len(stem):
+            stem = stem[:index] + 'è' + stem[index + 1:]
+
+    # do é -> è replacement if required
+    if model in ['céder', 'rapiécer', 'protéger'] and suffix in ['e', 'es', 'ent']:
+        index = stem.rfind('é')
+        if 0 <= index < len(stem):
+            stem = stem[:index] + 'è' + stem[index + 1:]
+
+    result = stem + suffix
+
+    # do c -> ç replacement if required
+    if model in ['lancer', 'dépecer', 'rapiécer', 'recevoir']:
+        index = result.rfind('c')
+        if 0 <= index and index + 1 < len(result) and result[index + 1] in ['a', 'o', 'u']:
+            result = result[:index] + 'ç' + result[index + 1:]
+
 
     return result
