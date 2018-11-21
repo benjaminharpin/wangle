@@ -683,3 +683,134 @@ def calculate_imparfait(lemma, subject_group):
             result = result[:index] + 'ge' + result[index + 1:]
 
     return result
+
+def calculate_futur_stem(lemma, model): 
+    stem = lemma
+
+    if model in ['appeler', 'jeter']:
+        stem = stem[:-2] + stem[-3] + 'er'
+    elif model in ['peser', 'dépecer']:
+        index = stem[:-2].rfind('e')
+        if 0 <= index < len(stem):
+            stem = stem[:index] + 'è' + stem[index + 1:]
+    elif model in ['employer', 'essuyer']:
+        stem = stem[:-3] + 'ier'
+    elif model == 'envoyer':
+        stem = stem[:-4] + 'err'
+    elif model == 'maudire':
+        stem = stem[:-1]
+    elif model == 'cueillir':
+        stem = stem[:-2] + 'er'
+    elif model == 'voir':
+        stem = stem[:-3] + 'err'
+    elif model in ['devoir', 'recevoir', 'mouvoir', 'premouvoir', 'promouvoir', 'pleuvoir']:
+        stem = stem[:-3] + 'r'
+    elif model in ['valoir', 'prévaloir']:
+        stem = stem[:-5] + 'audr'
+    elif model == 'falloir':
+        stem = stem[:-6] + 'audr'
+    elif model == 'pouvoir':
+        stem = stem[:-6] + 'ourr'
+    elif model in ['savoir', 'avoir']:
+        stem = stem[:-5] + 'aur'
+    elif model == 'vouloir':
+        stem = stem[:-4] + 'dr'
+    elif model == 'asseoir':
+        stem = stem[:-4] + 'iér'
+    elif model == 'faire':
+        stem = stem[:-4] + 'er'
+    elif model == 'acquérir':
+        stem = stem[:-4] + 'érr'
+    elif model in ['courir', 'mourir']:
+        stem = stem[:-2] + 'r'
+    elif model == 'venir':
+        stem = stem[:-4] + 'iendr'
+    elif model == 'être':
+        stem = 'ser'
+    elif model == 'aller':
+        stem = 'ir'
+    elif model.endswith('re'):
+        stem = stem[:-1]
+
+    return stem
+
+def calculate_futur_suffix(subject_group):
+    suffix = ''
+
+    if subject_group == 'S1':
+        suffix = 'ai'
+    elif subject_group == 'S2':
+        suffix = 'as'
+    elif subject_group == 'S3':
+        suffix = 'a'
+    elif subject_group == 'P1':
+        suffix = 'ons'
+    elif subject_group == 'P2':
+        suffix = 'ez'
+    elif subject_group == 'P3':
+        suffix = 'ont'
+
+    return suffix
+
+def calculate_futur(lemma, subject_group):
+    model = calculate_lemma_model(lemma)
+
+    stem = calculate_futur_stem(lemma, model)
+    if stem is None:
+        return None
+
+    suffix = calculate_futur_suffix(subject_group)
+    if suffix is None:
+        return None
+
+    # apply consonant doubling if required
+    if model in ['appeler', 'jeter'] and suffix in ['e', 'es', 'ent']:
+        stem += stem[-1]
+
+    # do e -> è replacement if required
+    if model in ['peser', 'dépecer'] and suffix in ['e', 'es', 'ent']:
+        index = stem.rfind('e')
+        if 0 <= index < len(stem):
+            stem = stem[:index] + 'è' + stem[index + 1:]
+
+    # do é -> è replacement if required
+    if model in ['céder', 'rapiécer', 'protéger'] and suffix in ['e', 'es', 'ent']:
+        index = stem.rfind('é')
+        if 0 <= index < len(stem):
+            stem = stem[:index] + 'è' + stem[index + 1:]
+    result = stem + suffix
+
+    return result
+
+def calculate_conditionnel_suffix(subject_group):
+    suffix = ''
+
+    if subject_group == 'S1':
+        suffix = 'ais'
+    elif subject_group == 'S2':
+        suffix = 'ais'
+    elif subject_group == 'S3':
+        suffix = 'ait'
+    elif subject_group == 'P1':
+        suffix = 'ions'
+    elif subject_group == 'P2':
+        suffix = 'iez'
+    elif subject_group == 'P3':
+        suffix = 'aient'
+
+    return suffix
+
+def calculate_conditionnel(lemma, subject_group):
+    model = calculate_lemma_model(lemma)
+
+    stem = calculate_futur_stem(lemma, model)
+    if stem is None:
+        return None
+
+    suffix = calculate_conditionnel_suffix(subject_group)
+    if suffix is None:
+        return None
+
+    result = stem + suffix
+
+    return result
