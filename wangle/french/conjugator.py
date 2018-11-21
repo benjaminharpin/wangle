@@ -190,7 +190,7 @@ def calculate_infinitive_stem(lemma):
     elif lemma.endswith('er') or lemma.endswith('ir') or lemma.endswith('ïr') or lemma.endswith('re'): 
         return lemma[:-2]
 
-def calculate_present_stem(lemma, model, subject_group):
+def calculate_présent_stem(lemma, model, subject_group):
     stem = calculate_infinitive_stem(lemma)
     
     if stem is None:
@@ -371,7 +371,7 @@ def calculate_present_stem(lemma, model, subject_group):
 
     return stem
 
-def calculate_present_suffix(model, subject_group, stem):
+def calculate_présent_suffix(model, subject_group, stem):
     suffix = ''
 
     conjugation_group = calculate_conjugation_group(model)
@@ -408,7 +408,7 @@ def calculate_present_suffix(model, subject_group, stem):
         suffix = ''
     return suffix
 
-def calculate_present(lemma, subject_group):
+def calculate_présent(lemma, subject_group):
     model = calculate_lemma_model(lemma)
 
     if model == 'être':
@@ -452,11 +452,11 @@ def calculate_present(lemma, subject_group):
             # -dire -> -dites
             return lemma[:-2] + 'tes'
 
-    stem = calculate_present_stem(lemma, model, subject_group)
+    stem = calculate_présent_stem(lemma, model, subject_group)
     if stem is None:
         return None
 
-    suffix = calculate_present_suffix(model, subject_group, stem)
+    suffix = calculate_présent_suffix(model, subject_group, stem)
     if suffix is None:
         return None
 
@@ -631,4 +631,55 @@ def calculate_past_participle(lemma, masculine, plural):
     if plural and not result.endswith('s'):
         result += 's'
     
+    return result
+
+def calculate_imparfait_stem(lemma, model): 
+    if lemma == 'être':
+        return 'ét'
+
+    return calculate_présent_stem(lemma, model, 'P1')
+
+def calculate_imparfait_suffix(subject_group):
+    suffix = ''
+
+    if subject_group == 'S1':
+        suffix = 'ais'
+    elif subject_group == 'S2':
+        suffix = 'ais'
+    elif subject_group == 'S3':
+        suffix = 'ait'
+    elif subject_group == 'P1':
+        suffix = 'ions'
+    elif subject_group == 'P2':
+        suffix = 'iez'
+    elif subject_group == 'P3':
+        suffix = 'aient'
+
+    return suffix
+
+def calculate_imparfait(lemma, subject_group):
+    model = calculate_lemma_model(lemma)
+
+    stem = calculate_imparfait_stem(lemma, model)
+    if stem is None:
+        return None
+
+    suffix = calculate_imparfait_suffix(subject_group)
+    if suffix is None:
+        return None
+
+    result = stem + suffix
+
+    # do c -> ç replacement if required
+    if model in ['lancer', 'dépecer', 'rapiécer', 'recevoir']:
+        index = result.rfind('c')
+        if 0 <= index and index + 1 < len(result) and result[index + 1] in ['a', 'o', 'u']:
+            result = result[:index] + 'ç' + result[index + 1:]
+
+    # do g -> ge replacement if required
+    if model in ['manger', 'protéger']:
+        index = result.rfind('g')
+        if 0 <= index and index + 1 < len(result) and result[index + 1] in ['a', 'o']:
+            result = result[:index] + 'ge' + result[index + 1:]
+
     return result

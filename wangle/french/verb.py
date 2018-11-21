@@ -150,7 +150,7 @@ def conjugate(sentence, verb):
                 conj_mood = verb.get_tag_value("conj_mood")
                 conj_tense = verb.get_tag_value("conj_tense")
                 if conj_mood == "indicatif" and conj_tense == "présent":
-                    verb.inflection = sentence.conjugator.calculate_present(verb.lemma, conj_group)
+                    verb.inflection = sentence.conjugator.calculate_présent(verb.lemma, conj_group)
     elif verb.has_tag("past_participle"):
         gender, is_plural = "masc", False
         if verb.has_tag("agrees_with"):
