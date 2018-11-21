@@ -194,20 +194,20 @@ class Tests(unittest.TestCase):
                 s.contract()
                 self.assertEqual(str(s), conjugation)
 
-    def test_conditionnel_inflection(self):
+    def test_passé_simple_inflection(self):
         conjugations = [
-            ("je", "je serais"),
-            ("tu", "tu serais"),
-            ("il", "il serait"),
-            ("nous", "nous serions"),
-            ("vous", "vous seriez"),
-            ("ils", "ils seraient"),
+            ("je", "je fus"),
+            ("tu", "tu fus"),
+            ("il", "il fut"),
+            ("nous", "nous fûmes"),
+            ("vous", "vous fûtes"),
+            ("ils", "ils furent"),
         ]
         for subject, conjugation in conjugations:
             with self.subTest(subject=subject):
                 s = Sentence()
                 p = add_subject_pronoun(s, subject)
-                v = add_finite_verb(s, 'être', p.id, mood="conditionnel", tense="présent")
+                v = add_finite_verb(s, 'être', p.id, tense="passé simple")
                 s.inflect()
                 s.contract()
                 self.assertEqual(str(s), conjugation)
@@ -266,6 +266,42 @@ class Tests(unittest.TestCase):
                 s.contract()
                 self.assertEqual(str(s), conjugation)
 
+    def test_passé_anterieur_inflection(self):
+        conjugations = [
+            ("je", "j'eus aimé"),
+            ("tu", "tu eus aimé"),
+            ("il", "il eut aimé"),
+            ("nous", "nous eûmes aimé"),
+            ("vous", "vous eûtes aimé"),
+            ("ils", "ils eurent aimé"),
+        ]
+        for subject, conjugation in conjugations:
+            with self.subTest(subject=subject):
+                s = Sentence()
+                p = add_subject_pronoun(s, subject)
+                v = add_finite_verb(s, 'aimer', p.id, tense="passé anterieur")
+                s.inflect()
+                s.contract()
+                self.assertEqual(str(s), conjugation)
+
+    def test_conditionnel_présent_inflection(self):
+        conjugations = [
+            ("je", "je serais"),
+            ("tu", "tu serais"),
+            ("il", "il serait"),
+            ("nous", "nous serions"),
+            ("vous", "vous seriez"),
+            ("ils", "ils seraient"),
+        ]
+        for subject, conjugation in conjugations:
+            with self.subTest(subject=subject):
+                s = Sentence()
+                p = add_subject_pronoun(s, subject)
+                v = add_finite_verb(s, 'être', p.id, mood="conditionnel", tense="présent")
+                s.inflect()
+                s.contract()
+                self.assertEqual(str(s), conjugation)
+
     def test_conditionnel_passé_inflection(self):
         conjugations = [
             ("je", "j'aurais aimé"),
@@ -280,6 +316,42 @@ class Tests(unittest.TestCase):
                 s = Sentence()
                 p = add_subject_pronoun(s, subject)
                 v = add_finite_verb(s, 'aimer', p.id, mood="conditionnel", tense="passé")
+                s.inflect()
+                s.contract()
+                self.assertEqual(str(s), conjugation)
+
+    def test_subjonctif_présent_inflection(self):
+        conjugations = [
+            ("je", "je sois"),
+            ("tu", "tu sois"),
+            ("il", "il soit"),
+            ("nous", "nous soyons"),
+            ("vous", "vous soyez"),
+            ("ils", "ils soient"),
+        ]
+        for subject, conjugation in conjugations:
+            with self.subTest(subject=subject):
+                s = Sentence()
+                p = add_subject_pronoun(s, subject)
+                v = add_finite_verb(s, 'être', p.id, mood="subjonctif", tense="présent")
+                s.inflect()
+                s.contract()
+                self.assertEqual(str(s), conjugation)
+
+    def test_conditionnel_passé_inflection(self):
+        conjugations = [
+            ("je", "j'aie aimé"),
+            ("tu", "tu aies aimé"),
+            ("il", "il ait aimé"),
+            ("nous", "nous ayons aimé"),
+            ("vous", "vous ayez aimé"),
+            ("ils", "ils aient aimé"),
+        ]
+        for subject, conjugation in conjugations:
+            with self.subTest(subject=subject):
+                s = Sentence()
+                p = add_subject_pronoun(s, subject)
+                v = add_finite_verb(s, 'aimer', p.id, mood="subjonctif", tense="passé")
                 s.inflect()
                 s.contract()
                 self.assertEqual(str(s), conjugation)
