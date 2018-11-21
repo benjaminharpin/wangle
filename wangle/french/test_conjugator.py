@@ -2,7 +2,6 @@ import unittest
 import os
 
 from . import conjugator
-from . import decliner
 
 class Tests(unittest.TestCase):
 
