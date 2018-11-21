@@ -64,7 +64,7 @@ rire:ris,ris,rit,rîmes,rîtes,rirent
 plaindre:plaignis,plaignis,plaignit,plaignîmes,plaignîtes,plaignirent
 peindre:peignis,peignis,peignit,peignîmes,peignîtes,peignirent
 joindre:joignis,joignis,joignit,joignîmes,joignîtes,joignirent
-résoudre:résoulus,résoulus,résoulut,résoulûmes,résoulûtes,résoulurent
+résoudre:résolus,résolus,résolut,résolûmes,résolûtes,résolurent
 coudre:cousis,cousis,cousit,cousîmes,cousîtes,cousirent
 moudre:moulus,moulus,moulut,moulûmes,moulûtes,moulurent
 exclure:exclus,exclus,exclut,exclûmes,exclûtes,exclurent

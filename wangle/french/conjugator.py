@@ -531,6 +531,9 @@ def calculate_past_participle_stem(lemma, model):
     elif model in ['maudire', 'conduire', 'dire', 'prédire', 'écrire', 'faire', 'traire', ]:
         # remove 'i'
         stem = stem[:-1]
+    elif model in ['exclure', 'inclure']:
+        # remove 'u'
+        stem = stem[:-1]
     elif model == 'couvrir':
         # remove 'r'
         stem = stem[:-1]
@@ -543,7 +546,7 @@ def calculate_past_participle_stem(lemma, model):
     elif model in ['plaire', 'taire']:
         # remove 'aî'
         stem = stem[:-2]
-    elif model == 'lire':
+    elif model in ['ecrire', 'nuire', 'lire', 'rire', 'suffire', 'circoncire']:
         # remove 'i'
         stem = stem[:-1]
     elif model == 'absoudre':
@@ -582,18 +585,23 @@ def calculate_past_participle_suffix(model, masculine):
         suffix = 'i'
     elif model == 'haïr':
         suffix = 'ï'
-    elif model in ['asseoir', 'surseoir', 'prendre', 'mettre', 'acquérir']:
+    elif model in ['asseoir', 'surseoir', 'prendre', 'mettre', 'circoncire', 'acquérir']:
         suffix = 'is'
     elif model in ['couvrir', 'plaindre', 'mourir']:
         suffix = 't'
-    elif model in ['maudire', 'conduire', 'dire', 'prédire', 'écrire', 'faire', 'traire'] or (model == 'absoudre' and not masculine):
+    elif model in ['maudire', 'conduire', 'dire', 'prédire', 'écrire', 'faire', 'traire']:
         suffix = 'it'
     elif model in ['voir', 'prévoir', 'pourvoir', 'récevoir', 'promouvoir', 'pleuvoir', 'recevoir', 'valoir', 'prévaloir', 'falloir', 'pouvoir', 'savoir', 'vouloir', 'avoir', 'rendre', 'rompre', 'battre', 'vivre', 'lire', 'exclure', 'boire', 'croire', 'accroître', 'connaître', 'plaire', 'taire', 'coudre', 'moudre', 'résoudre', 'vaincre', 'courir', 'vêtir', 'venir']:
         suffix = 'u'
     elif model in ['devoir', 'mouvoir', 'croître']:
         suffix = 'û'
-    elif model in ['inclure', 'circoncire'] or (model == 'absoudre' and masculine):
-        suffix = 's'
+    elif model == 'inclure':
+        suffix = 'us'
+    elif model == 'absoudre':
+        if masculine:
+            suffix = 's'
+        else:
+            suffix = 't'
 
     return suffix
 
@@ -789,6 +797,7 @@ def calculate_futur(lemma, subject_group):
         index = stem.rfind('é')
         if 0 <= index < len(stem):
             stem = stem[:index] + 'è' + stem[index + 1:]
+
     result = stem + suffix
 
     return result
@@ -845,23 +854,35 @@ def calculate_passé_simple_stem(lemma, model):
         pp_suffix = calculate_past_participle_suffix(model, True)
         if lemma.endswith('er'):
             stem = pp_stem + 'a'
-        elif pp_suffix in ['i', 'is', 'it']:
+        elif pp_suffix in ['i', 'ï', 'is', 'it']:
+            stem = pp_stem
             if model == 'faire':
-                stem = pp_stem[:-1] + 'i'
+                stem = stem[:-1]
             elif model == 'conduire':
-                stem = pp_stem[:-1] + 'si'
-            elif model == 'ecrire':
-                stem = pp_stem[:-1] + 'vi'
+                stem += 'is'
+            elif model == 'écrire':
+                stem += 'iv'
+            elif model == 'nuire':
+                stem += 'is'
+
+            if pp_suffix == 'ï':
+                stem += 'ï'
             else:
-                stem = pp_stem + 'i'
-        elif pp_suffix in ['u', 'us']:
-            if model in ['voir', 'rendre', 'rompre', 'battre', 'coudre', 'vaincre', 'vêtir']:
-                stem = pp_stem + 'i'
+                stem += 'i'
+        elif pp_suffix in ['u', 'û', 'us']:
+            stem = pp_stem
+            if model in ['voir', 'prévoir', 'rendre', 'rompre', 'battre', 'coudre', 'vaincre', 'vêtir']:
+                if model == 'vaincre':
+                    # vaincre changes -c -> -qu
+                    stem = stem[:-1] + 'qu'
+                stem += 'i'
             elif model == 'venir':
                 # venir/tenir changes -enu -> -in
-                stem = pp_stem[:-2] + 'in'
+                stem = stem[:-2] + 'in'
+            elif model == 'croître':
+                stem += 'û'
             else:
-                stem = pp_stem + 'u'
+                stem += 'u'
 
     return stem
 
@@ -924,5 +945,17 @@ def calculate_passé_simple(lemma, subject_group):
         result = stem[:-1] + 'è' + suffix
     else:
         result = stem + suffix
+
+    # do c -> ç replacement if required
+    if model in ['lancer', 'dépecer', 'rapiécer', 'recevoir']:
+        index = result.rfind('c')
+        if 0 <= index and index + 1 < len(result) and result[index + 1] in ['a', 'â', 'u', 'û']:
+            result = result[:index] + 'ç' + result[index + 1:]
+
+    # do g -> ge replacement if required
+    if model in ['manger', 'protéger']:
+        index = result.rfind('g')
+        if 0 <= index and index + 1 < len(result) and result[index + 1] in ['a', 'â']:
+            result = result[:index] + 'ge' + result[index + 1:]
 
     return result
