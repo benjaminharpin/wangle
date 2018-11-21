@@ -528,6 +528,12 @@ def calculate_past_participle_stem(lemma, model):
     elif model in ['boire', 'croire']:
         # remove 'oi'
         stem = stem[:-2]
+    elif model in ['maudire', 'conduire', 'dire', 'prédire', 'écrire', 'faire', 'traire', ]:
+        # remove 'i'
+        stem = stem[:-1]
+    elif model == 'couvrir':
+        # remove 'r'
+        stem = stem[:-1]
     elif model in ['croître', 'accroître']:
         # remove 'oît'
         stem = stem[:-3]
@@ -578,8 +584,10 @@ def calculate_past_participle_suffix(model, masculine):
         suffix = 'ï'
     elif model in ['asseoir', 'surseoir', 'prendre', 'mettre', 'acquérir']:
         suffix = 'is'
-    elif model in ['maudire', 'couvrir', 'conduire', 'dire', 'prédire', 'écrire', 'faire', 'traire', 'plaindre', 'mourir'] or (model == 'absoudre' and not masculine):
+    elif model in ['couvrir', 'plaindre', 'mourir']:
         suffix = 't'
+    elif model in ['maudire', 'conduire', 'dire', 'prédire', 'écrire', 'faire', 'traire'] or (model == 'absoudre' and not masculine):
+        suffix = 'it'
     elif model in ['voir', 'prévoir', 'pourvoir', 'récevoir', 'promouvoir', 'pleuvoir', 'recevoir', 'valoir', 'prévaloir', 'falloir', 'pouvoir', 'savoir', 'vouloir', 'avoir', 'rendre', 'rompre', 'battre', 'vivre', 'lire', 'exclure', 'boire', 'croire', 'accroître', 'connaître', 'plaire', 'taire', 'coudre', 'moudre', 'résoudre', 'vaincre', 'courir', 'vêtir', 'venir']:
         suffix = 'u'
     elif model in ['devoir', 'mouvoir', 'croître']:
@@ -815,5 +823,106 @@ def calculate_conditionnel(lemma, subject_group):
         return None
 
     result = stem + suffix
+
+    return result
+
+def calculate_passé_simple_stem(lemma, model): 
+    stem = ""
+    if model == 'être':
+        stem = lemma[:-4] + 'fu'
+    elif model == 'naître':
+        stem = lemma[:-4] + 'qui'
+    elif model in ['couvrir', 'mourir']:
+        stem = calculate_infinitive_stem(lemma)
+        if model == 'couvrir':
+            stem += 'i'
+        else:
+            stem += 'u'
+    elif model == 'plaindre':
+        stem = calculate_présent_stem(lemma, model, 'P1') + 'i'
+    else:
+        pp_stem = calculate_past_participle_stem(lemma, model)
+        pp_suffix = calculate_past_participle_suffix(model, True)
+        if lemma.endswith('er'):
+            stem = pp_stem + 'a'
+        elif pp_suffix in ['i', 'is', 'it']:
+            if model == 'faire':
+                stem = pp_stem[:-1] + 'i'
+            elif model == 'conduire':
+                stem = pp_stem[:-1] + 'si'
+            elif model == 'ecrire':
+                stem = pp_stem[:-1] + 'vi'
+            else:
+                stem = pp_stem + 'i'
+        elif pp_suffix in ['u', 'us']:
+            if model in ['voir', 'rendre', 'rompre', 'battre', 'coudre', 'vaincre', 'vêtir']:
+                stem = pp_stem + 'i'
+            elif model == 'venir':
+                # venir/tenir changes -enu -> -in
+                stem = pp_stem[:-2] + 'in'
+            else:
+                stem = pp_stem + 'u'
+
+    return stem
+
+def calculate_passé_simple_suffix(subject_group, stem):
+    suffix = ''
+
+    if stem.endswith('a'):
+        if subject_group == 'S1':
+            suffix = 'i'
+        elif subject_group == 'S2':
+            suffix = 's'
+        elif subject_group == 'S3':
+            suffix = ''
+    else:
+        if subject_group == 'S1':
+            suffix = 's'
+        elif subject_group == 'S2':
+            suffix = 's'
+        elif subject_group == 'S3':
+            suffix = 't'
+    if subject_group == 'P1':
+        suffix = '^mes'
+    elif subject_group == 'P2':
+        suffix = '^tes'
+    elif subject_group == 'P3':
+        suffix = 'rent'
+
+    return suffix
+
+def calculate_passé_simple(lemma, subject_group):
+    model = calculate_lemma_model(lemma)
+
+    stem = calculate_passé_simple_stem(lemma, model)
+    if stem is None:
+        return None
+
+    suffix = calculate_passé_simple_suffix(subject_group, stem)
+    if suffix is None:
+        return None
+
+    result = None
+
+    if suffix.startswith("^"):
+        last_vowel = ''
+        index = len(stem) - 1
+        while 0 <= index < len(stem) and stem[index] not in 'aâeéèêhiîïoôu':
+            index -= 1
+        if 0 <= index < len(stem) and stem[index] in 'aiu':
+            replacement = None
+            if stem[index] == 'a':
+                replacement = 'â'
+            elif stem[index] == 'i':
+                replacement = 'î'
+            elif stem[index] == 'u':
+                replacement = 'û'
+            result = stem[0:index] + replacement + stem[index + 1:] + suffix[1:]
+        else:
+            result = stem + suffix[1:]
+    elif stem.endswith('a') and suffix == 'rent':
+        result = stem[:-1] + 'è' + suffix
+    else:
+        result = stem + suffix
 
     return result
