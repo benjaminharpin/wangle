@@ -1,0 +1,6 @@
+kaufen:kaufe,kaufst,kauft,kaufen,kauft,kaufen
+warten:warte,wartest,wartet,warten,wartet,warten
+wandern:wandere,wanderst,wandert,wandern,wandert,wandern
+haben:habe,hast,hat,haben,habt,haben
+sein:bin,bist,ist,sind,seid,sind
+werden:werde,wirst,wird,werden,werdet,werden

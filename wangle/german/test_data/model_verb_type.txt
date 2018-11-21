@@ -1,0 +1,6 @@
+kaufen:weak
+warten:weak
+wandern:weak
+haben:strong
+sein:strong
+werden:strong
