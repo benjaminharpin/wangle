@@ -693,7 +693,7 @@ def calculate_futur_stem(lemma, model):
         index = stem[:-2].rfind('e')
         if 0 <= index < len(stem):
             stem = stem[:index] + 'è' + stem[index + 1:]
-    elif model in ['employer', 'essuyer']:
+    elif model == 'employer':
         stem = stem[:-3] + 'ier'
     elif model == 'envoyer':
         stem = stem[:-4] + 'err'
