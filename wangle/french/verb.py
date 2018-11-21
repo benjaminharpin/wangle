@@ -149,8 +149,16 @@ def conjugate(sentence, verb):
                 verb.set_tag("conj_group", value=conj_group)
                 conj_mood = verb.get_tag_value("conj_mood")
                 conj_tense = verb.get_tag_value("conj_tense")
-                if conj_mood == "indicatif" and conj_tense == "présent":
-                    verb.inflection = sentence.conjugator.calculate_présent(verb.lemma, conj_group)
+                if conj_mood == "indicatif":
+                    if conj_tense == "présent":
+                        verb.inflection = sentence.conjugator.calculate_présent(verb.lemma, conj_group)
+                    elif conj_tense == "imparfait":
+                        verb.inflection = sentence.conjugator.calculate_imparfait(verb.lemma, conj_group)
+                    elif conj_tense == "futur":
+                        verb.inflection = sentence.conjugator.calculate_futur(verb.lemma, conj_group)
+                elif conj_mood == "conditionnel":
+                    if conj_tense == "présent":
+                        verb.inflection = sentence.conjugator.calculate_conditionnel(verb.lemma, conj_group)
     elif verb.has_tag("past_participle"):
         gender, is_plural = "masc", False
         if verb.has_tag("agrees_with"):
