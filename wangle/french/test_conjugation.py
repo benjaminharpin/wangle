@@ -1,11 +1,12 @@
 import unittest
 import os
 
-from . import conjugator
+from .conjugation import Conjugator
 
 class Tests(unittest.TestCase):
 
     def test_lemma_models(self):
+        conjugator = Conjugator()
         full_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'test_data', 'verb_models.txt')
         result = []
         with open(full_path) as fin:
@@ -17,6 +18,7 @@ class Tests(unittest.TestCase):
                         self.assertEqual(expected, calculated, msg=('lemma \'%s\' should have model \'%s\', not model \'%s\'' % (lemma, expected, calculated)))
                         
     def test_model_conjugations_présent(self):
+        conjugator = Conjugator()
         full_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'test_data', 'model_conjugations_présent.txt')
         with open(full_path) as fin:
             for line in fin:
@@ -34,6 +36,7 @@ class Tests(unittest.TestCase):
                             self.assertEqual(calculated, expected, msg=('the %s conjugation should be %s, not %s' % (subject_group, expected, calculated)))
 
     def test_model_conjugations_imparfait(self):
+        conjugator = Conjugator()
         full_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'test_data', 'model_conjugations_imparfait.txt')
         with open(full_path) as fin:
             for line in fin:
@@ -51,6 +54,7 @@ class Tests(unittest.TestCase):
                             self.assertEqual(calculated, expected, msg=('the %s conjugation should be %s, not %s' % (subject_group, expected, calculated)))
 
     def test_model_conjugations_futur(self):
+        conjugator = Conjugator()
         full_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'test_data', 'model_conjugations_futur.txt')
         with open(full_path) as fin:
             for line in fin:
@@ -68,6 +72,7 @@ class Tests(unittest.TestCase):
                             self.assertEqual(calculated, expected, msg=('the %s conjugation should be %s, not %s' % (subject_group, expected, calculated)))
 
     def test_model_conjugations_conditionnel(self):
+        conjugator = Conjugator()
         full_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'test_data', 'model_conjugations_conditionnel.txt')
         with open(full_path) as fin:
             for line in fin:
@@ -85,6 +90,7 @@ class Tests(unittest.TestCase):
                             self.assertEqual(calculated, expected, msg=('the %s conjugation should be %s, not %s' % (subject_group, expected, calculated)))
 
     def test_model_conjugations_passé_simple(self):
+        conjugator = Conjugator()
         full_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'test_data', 'model_conjugations_passé_simple.txt')
         with open(full_path) as fin:
             for line in fin:
@@ -102,6 +108,7 @@ class Tests(unittest.TestCase):
                             self.assertEqual(calculated, expected, msg=('the %s conjugation should be %s, not %s' % (subject_group, expected, calculated)))
 
     def test_model_conjugations_subjonctif_présent(self):
+        conjugator = Conjugator()
         full_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'test_data', 'model_conjugations_subjonctif_présent.txt')
         with open(full_path) as fin:
             for line in fin:
@@ -120,6 +127,7 @@ class Tests(unittest.TestCase):
 
 
     def test_model_conjugations_past_participle(self):
+        conjugator = Conjugator()
         full_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'test_data', 'model_conjugations_past_participle.txt')
         with open(full_path) as fin:
             for line in fin:

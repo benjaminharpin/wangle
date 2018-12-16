@@ -1,6 +1,6 @@
 import unittest
 
-from .structure import Sentence
+from ..structure import Sentence
 from .pronoun import add_subject_pronoun
 
 class Tests(unittest.TestCase):

@@ -1,11 +1,13 @@
 import unittest
 
-from .structure import Sentence
+from ..structure import Sentence
+from .inflection import Inflector
 from .pronoun import add_subject_pronoun
 from .verb import add_finite_verb
 
 class Tests(unittest.TestCase):
     def test_single_tense_labelling(self):
+        inflector = Inflector()
         test_case = [
             ("indicatif", "présent"),
             ("indicatif", "imparfait"),
@@ -21,7 +23,7 @@ class Tests(unittest.TestCase):
                 p = add_subject_pronoun(s, "je")
                 lemma = "aimer"
                 v = add_finite_verb(s, lemma, p.id, mood=mood, tense=tense)
-                s.inflect()
+                inflector.inflect(s)
 
                 self.assertEqual(v.lemma, lemma)
                 self.assertTrue(v.has_tag("verb"))
@@ -33,6 +35,7 @@ class Tests(unittest.TestCase):
                 self.assertEqual(v.get_tag_value("conj_tense"), tense)
 
     def test_single_aux_compound_tense_labelling(self):
+        inflector = Inflector()
         test_case = [
             ("indicatif", "passé composé", "présent"),
             ("indicatif", "plus-que-parfait", "imparfait"),
@@ -48,7 +51,7 @@ class Tests(unittest.TestCase):
                 p = add_subject_pronoun(s, "je")
                 lemma = "aimer"
                 v = add_finite_verb(s, lemma, p.id, mood=mood, tense=tense)
-                s.inflect()
+                inflector.inflect(s)
 
                 aux = s.tokens[1]
                 pp = s.tokens[2]
@@ -70,6 +73,7 @@ class Tests(unittest.TestCase):
                 self.assertFalse(pp.has_tag("finite_verb"))
 
     def test_vandertramp_verbs_use_être_aux(self):
+        inflector = Inflector()
         test_cases = [
             ("indicatif", "passé composé", "présent"),
             ("indicatif", "plus-que-parfait", "imparfait"),
@@ -103,13 +107,14 @@ class Tests(unittest.TestCase):
                     s = Sentence()
                     p = add_subject_pronoun(s, "je")
                     v = add_finite_verb(s, lemma, p.id, mood=mood, tense=tense)
-                    s.inflect()
+                    inflector.inflect(s)
 
                     aux = s.tokens[1]
 
                     self.assertEqual(aux.lemma, "être")
 
     def test_être_aux_override(self):
+        inflector = Inflector()
         test_cases = [
             ("indicatif", "passé composé", "présent"),
             ("indicatif", "plus-que-parfait", "imparfait"),
@@ -124,7 +129,7 @@ class Tests(unittest.TestCase):
                 s = Sentence()
                 p = add_subject_pronoun(s, "je")
                 v = add_finite_verb(s, "demeurer", p.id, mood=mood, tense=tense)
-                s.inflect()
+                inflector.inflect(s)
 
                 aux = s.tokens[1]
 
@@ -134,13 +139,14 @@ class Tests(unittest.TestCase):
                 s = Sentence()
                 p = add_subject_pronoun(s, "je")
                 v = add_finite_verb(s, "demeurer", p.id, mood=mood, tense=tense, aux_lemma="être")
-                s.inflect()
+                inflector.inflect(s)
 
                 aux = s.tokens[1]
 
                 self.assertEqual(aux.lemma, "être")
 
     def test_présent_inflection(self):
+        inflector = Inflector()
         conjugations = [
             ("je", "je suis"),
             ("tu", "tu es"),
@@ -154,11 +160,12 @@ class Tests(unittest.TestCase):
                 s = Sentence()
                 p = add_subject_pronoun(s, subject)
                 v = add_finite_verb(s, 'être', p.id)
-                s.inflect()
-                s.contract()
+                inflector.inflect(s)
+                inflector.contract(s)
                 self.assertEqual(str(s), conjugation)
                 
     def test_imparfait_inflection(self):
+        inflector = Inflector()
         conjugations = [
             ("je", "j'étais"),
             ("tu", "tu étais"),
@@ -172,11 +179,12 @@ class Tests(unittest.TestCase):
                 s = Sentence()
                 p = add_subject_pronoun(s, subject)
                 v = add_finite_verb(s, 'être', p.id, tense="imparfait")
-                s.inflect()
-                s.contract()
+                inflector.inflect(s)
+                inflector.contract(s)
                 self.assertEqual(str(s), conjugation)
 
     def test_futur_inflection(self):
+        inflector = Inflector()
         conjugations = [
             ("je", "je serai"),
             ("tu", "tu seras"),
@@ -190,11 +198,12 @@ class Tests(unittest.TestCase):
                 s = Sentence()
                 p = add_subject_pronoun(s, subject)
                 v = add_finite_verb(s, 'être', p.id, tense="futur")
-                s.inflect()
-                s.contract()
+                inflector.inflect(s)
+                inflector.contract(s)
                 self.assertEqual(str(s), conjugation)
 
     def test_passé_simple_inflection(self):
+        inflector = Inflector()
         conjugations = [
             ("je", "je fus"),
             ("tu", "tu fus"),
@@ -208,11 +217,12 @@ class Tests(unittest.TestCase):
                 s = Sentence()
                 p = add_subject_pronoun(s, subject)
                 v = add_finite_verb(s, 'être', p.id, tense="passé simple")
-                s.inflect()
-                s.contract()
+                inflector.inflect(s)
+                inflector.contract(s)
                 self.assertEqual(str(s), conjugation)
 
     def test_passé_composé_inflection(self):
+        inflector = Inflector()
         conjugations = [
             ("je", "j'ai aimé"),
             ("tu", "tu as aimé"),
@@ -226,11 +236,12 @@ class Tests(unittest.TestCase):
                 s = Sentence()
                 p = add_subject_pronoun(s, subject)
                 v = add_finite_verb(s, 'aimer', p.id, tense="passé composé")
-                s.inflect()
-                s.contract()
+                inflector.inflect(s)
+                inflector.contract(s)
                 self.assertEqual(str(s), conjugation)
 
     def test_plus_que_parfait_inflection(self):
+        inflector = Inflector()
         conjugations = [
             ("je", "j'avais aimé"),
             ("tu", "tu avais aimé"),
@@ -244,11 +255,12 @@ class Tests(unittest.TestCase):
                 s = Sentence()
                 p = add_subject_pronoun(s, subject)
                 v = add_finite_verb(s, 'aimer', p.id, tense="plus-que-parfait")
-                s.inflect()
-                s.contract()
+                inflector.inflect(s)
+                inflector.contract(s)
                 self.assertEqual(str(s), conjugation)
 
     def test_futur_anterieur_inflection(self):
+        inflector = Inflector()
         conjugations = [
             ("je", "j'aurai aimé"),
             ("tu", "tu auras aimé"),
@@ -262,11 +274,12 @@ class Tests(unittest.TestCase):
                 s = Sentence()
                 p = add_subject_pronoun(s, subject)
                 v = add_finite_verb(s, 'aimer', p.id, tense="futur anterieur")
-                s.inflect()
-                s.contract()
+                inflector.inflect(s)
+                inflector.contract(s)
                 self.assertEqual(str(s), conjugation)
 
     def test_passé_anterieur_inflection(self):
+        inflector = Inflector()
         conjugations = [
             ("je", "j'eus aimé"),
             ("tu", "tu eus aimé"),
@@ -280,11 +293,12 @@ class Tests(unittest.TestCase):
                 s = Sentence()
                 p = add_subject_pronoun(s, subject)
                 v = add_finite_verb(s, 'aimer', p.id, tense="passé anterieur")
-                s.inflect()
-                s.contract()
+                inflector.inflect(s)
+                inflector.contract(s)
                 self.assertEqual(str(s), conjugation)
 
     def test_conditionnel_présent_inflection(self):
+        inflector = Inflector()
         conjugations = [
             ("je", "je serais"),
             ("tu", "tu serais"),
@@ -298,11 +312,12 @@ class Tests(unittest.TestCase):
                 s = Sentence()
                 p = add_subject_pronoun(s, subject)
                 v = add_finite_verb(s, 'être', p.id, mood="conditionnel", tense="présent")
-                s.inflect()
-                s.contract()
+                inflector.inflect(s)
+                inflector.contract(s)
                 self.assertEqual(str(s), conjugation)
 
     def test_conditionnel_passé_inflection(self):
+        inflector = Inflector()
         conjugations = [
             ("je", "j'aurais aimé"),
             ("tu", "tu aurais aimé"),
@@ -316,11 +331,12 @@ class Tests(unittest.TestCase):
                 s = Sentence()
                 p = add_subject_pronoun(s, subject)
                 v = add_finite_verb(s, 'aimer', p.id, mood="conditionnel", tense="passé")
-                s.inflect()
-                s.contract()
+                inflector.inflect(s)
+                inflector.contract(s)
                 self.assertEqual(str(s), conjugation)
 
     def test_subjonctif_présent_inflection(self):
+        inflector = Inflector()
         conjugations = [
             ("je", "je sois"),
             ("tu", "tu sois"),
@@ -334,11 +350,12 @@ class Tests(unittest.TestCase):
                 s = Sentence()
                 p = add_subject_pronoun(s, subject)
                 v = add_finite_verb(s, 'être', p.id, mood="subjonctif", tense="présent")
-                s.inflect()
-                s.contract()
+                inflector.inflect(s)
+                inflector.contract(s)
                 self.assertEqual(str(s), conjugation)
 
     def test_conditionnel_passé_inflection(self):
+        inflector = Inflector()
         conjugations = [
             ("je", "j'aie aimé"),
             ("tu", "tu aies aimé"),
@@ -352,11 +369,12 @@ class Tests(unittest.TestCase):
                 s = Sentence()
                 p = add_subject_pronoun(s, subject)
                 v = add_finite_verb(s, 'aimer', p.id, mood="subjonctif", tense="passé")
-                s.inflect()
-                s.contract()
+                inflector.inflect(s)
+                inflector.contract(s)
                 self.assertEqual(str(s), conjugation)
 
     def test_past_participle_agrees_with_subject_for_transitive_conjugation_with_etre_aux(self):
+        inflector = Inflector()
         declensions = [
             (None, False, "vous êtes allé"),
             (None, True, "vous êtes allés"),
@@ -372,5 +390,5 @@ class Tests(unittest.TestCase):
                 s = Sentence()
                 p = add_subject_pronoun(s, "vous", gender=gender, is_plural=is_plural)
                 v = add_finite_verb(s, "aller", p.id, tense="passé composé")
-                s.inflect()
+                inflector.inflect(s)
                 self.assertEqual(str(s), result)
