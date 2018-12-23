@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name='wangle',  
-    version='0.1',
+    version='0.1.2',
     author="Ben Harpin",
     author_email="benjaminharpin@gmail.com",
     description="A python library for natural language manipulation.",
