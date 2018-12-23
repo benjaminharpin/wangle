@@ -1085,6 +1085,26 @@ class Conjugator:
                     subj_group = "S3"
         return subj_group
 
+    def word_gender(self, sentence, word, save_parameters=True):
+        if word.has_tag("gender"):
+            return word.get_tag_value("gender")
+
+        if word.has_tag("agrees_with"):
+            agrees_with = sentence.words[word.get_tag_value("agrees_with")]
+            return self.word_gender(sentence, agrees_with, save_parameters)
+
+        return "masc"
+
+    def word_is_plural(self, sentence, word, save_parameters=True):
+        if word.has_tag("is_plural"):
+            return word.get_tag_value("is_plural")
+
+        if word.has_tag("agrees_with"):
+            agrees_with = sentence.words[word.get_tag_value("agrees_with")]
+            return self.word_is_plural(sentence, agrees_with, save_parameters)
+
+        return False
+
     def conjugate(self, sentence, verb, save_parameters=True):
         if verb.has_tag("finite_verb"):
             subj_group = self.calculate_subj_group(sentence, verb)
@@ -1109,17 +1129,6 @@ class Conjugator:
                     if conj_tense == "présent":
                         verb.inflection = self.calculate_subjonctif_présent(verb.lemma, subj_group)
         elif verb.has_tag("past_participle"):
-            gender, is_plural = "masc", False
-            if verb.has_tag("agrees_with"):
-                word = sentence.words[verb.get_tag_value("agrees_with")]
-
-                if not verb.has_tag("gender") and word.has_tag("gender"):
-                    gender = word.get_tag_value("gender")
-                    if save_parameters:
-                        verb.set_tag("gender", value=gender)
-
-                if not verb.has_tag("is_plural") and word.has_tag("is_plural"):
-                    is_plural = word.get_tag_value("is_plural")
-                    if save_parameters:
-                        verb.set_tag("is_plural", value=is_plural)
+            gender = self.word_gender(sentence, verb, save_parameters)
+            is_plural = self.word_is_plural(sentence, verb, save_parameters)
             verb.inflection = self.calculate_past_participle(verb.lemma, gender == "masc", is_plural)
