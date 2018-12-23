@@ -17,7 +17,7 @@ verbs_that_conjugate_with_etre = [
     "partir"
 ]
 
-def add_finite_verb(sentence, lemma, subject_id, mood="indicatif", tense="présent", informal=False, position=None, aux_lemma=None):
+def add_finite_verb(sentence, lemma, subject_id, mood="indicatif", tense="présent", informal=False, position=None, aux_lemma=None, reflexive_pronoun_id=None):
     verb = sentence.register_word(lemma)
 
     verb.set_tag("verb")
@@ -37,7 +37,7 @@ def add_finite_verb(sentence, lemma, subject_id, mood="indicatif", tense="prése
             finite_verb = verb
         if tense in ["passé composé", "plus-que-parfait", "passé anterieur", "futur anterieur"]:
             if aux_lemma is None:
-                if verb.lemma in verbs_that_conjugate_with_etre:
+                if verb.lemma in verbs_that_conjugate_with_etre or reflexive_pronoun_id is not None:
                     aux_lemma = "être"
                 else:
                     aux_lemma = "avoir"
@@ -65,7 +65,7 @@ def add_finite_verb(sentence, lemma, subject_id, mood="indicatif", tense="prése
             finite_verb = verb
         if tense == "passé":
             if aux_lemma is None:
-                if verb.lemma in verbs_that_conjugate_with_etre:
+                if verb.lemma in verbs_that_conjugate_with_etre or reflexive_pronoun_id is not None:
                     aux_lemma = "être"
                 else:
                     aux_lemma = "avoir"
@@ -84,7 +84,7 @@ def add_finite_verb(sentence, lemma, subject_id, mood="indicatif", tense="prése
             finite_verb = verb
         if tense in ["passé", "plus-que-parfait"]:
             if aux_lemma is None:
-                if verb.lemma in verbs_that_conjugate_with_etre:
+                if verb.lemma in verbs_that_conjugate_with_etre or reflexive_pronoun_id is not None:
                     aux_lemma = "être"
                 else:
                     aux_lemma = "avoir"
@@ -121,7 +121,10 @@ def add_finite_verb(sentence, lemma, subject_id, mood="indicatif", tense="prése
         finite_verb.set_tag("agrees_with", subj.id)
 
     if pp is not None and aux.lemma == "être":
-        pp.set_tag("agrees_with", subj.id)
+        if reflexive_pronoun_id is not None:
+            pp.set_tag("agrees_with", reflexive_pronoun_id)
+        else:
+            pp.set_tag("agrees_with", subj.id)
 
     return verb
 

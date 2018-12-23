@@ -2,7 +2,7 @@ import unittest
 
 from ..structure import Sentence
 from .inflection import Inflector
-from .pronoun import add_subject_pronoun
+from .pronoun import add_subject_pronoun, add_reflexive_pronoun
 from .verb import add_finite_verb
 
 class Tests(unittest.TestCase):
@@ -163,6 +163,26 @@ class Tests(unittest.TestCase):
                 inflector.inflect(s)
                 inflector.contract(s)
                 self.assertEqual(str(s), conjugation)
+
+    def test_présent_inflection_reflexive(self):
+        inflector = Inflector()
+        conjugations = [
+            ("je", "je me débrouille"),
+            ("tu", "tu te débrouilles"),
+            ("il", "il se débrouille"),
+            ("nous", "nous nous débrouillons"),
+            ("vous", "vous vous débrouillez"),
+            ("ils", "ils se débrouillent"),
+        ]
+        for subject, conjugation in conjugations:
+            with self.subTest(subject=subject):
+                s = Sentence()
+                p = add_subject_pronoun(s, subject)
+                r = add_reflexive_pronoun(s, p.id)
+                v = add_finite_verb(s, 'débrouiller', p.id, reflexive_pronoun_id=r.id)
+                inflector.inflect(s)
+                inflector.contract(s)
+                self.assertEqual(str(s), conjugation)
                 
     def test_imparfait_inflection(self):
         inflector = Inflector()
@@ -179,6 +199,26 @@ class Tests(unittest.TestCase):
                 s = Sentence()
                 p = add_subject_pronoun(s, subject)
                 v = add_finite_verb(s, 'être', p.id, tense="imparfait")
+                inflector.inflect(s)
+                inflector.contract(s)
+                self.assertEqual(str(s), conjugation)
+
+    def test_imparfait_inflection_reflexive(self):
+        inflector = Inflector()
+        conjugations = [
+            ("je", "je me débrouillais"),
+            ("tu", "tu te débrouillais"),
+            ("il", "il se débrouillait"),
+            ("nous", "nous nous débrouillions"),
+            ("vous", "vous vous débrouilliez"),
+            ("ils", "ils se débrouillaient"),
+        ]
+        for subject, conjugation in conjugations:
+            with self.subTest(subject=subject):
+                s = Sentence()
+                p = add_subject_pronoun(s, subject)
+                r = add_reflexive_pronoun(s, p.id)
+                v = add_finite_verb(s, 'débrouiller', p.id, tense="imparfait", reflexive_pronoun_id=r.id)
                 inflector.inflect(s)
                 inflector.contract(s)
                 self.assertEqual(str(s), conjugation)
@@ -202,6 +242,26 @@ class Tests(unittest.TestCase):
                 inflector.contract(s)
                 self.assertEqual(str(s), conjugation)
 
+    def test_futur_inflection_reflexive(self):
+        inflector = Inflector()
+        conjugations = [
+            ("je", "je me débrouillerai"),
+            ("tu", "tu te débrouilleras"),
+            ("il", "il se débrouillera"),
+            ("nous", "nous nous débrouillerons"),
+            ("vous", "vous vous débrouillerez"),
+            ("ils", "ils se débrouilleront"),
+        ]
+        for subject, conjugation in conjugations:
+            with self.subTest(subject=subject):
+                s = Sentence()
+                p = add_subject_pronoun(s, subject)
+                r = add_reflexive_pronoun(s, p.id)
+                v = add_finite_verb(s, 'débrouiller', p.id, tense="futur", reflexive_pronoun_id=r.id)
+                inflector.inflect(s)
+                inflector.contract(s)
+                self.assertEqual(str(s), conjugation)
+
     def test_passé_simple_inflection(self):
         inflector = Inflector()
         conjugations = [
@@ -217,6 +277,26 @@ class Tests(unittest.TestCase):
                 s = Sentence()
                 p = add_subject_pronoun(s, subject)
                 v = add_finite_verb(s, 'être', p.id, tense="passé simple")
+                inflector.inflect(s)
+                inflector.contract(s)
+                self.assertEqual(str(s), conjugation)
+
+    def test_passé_simple_inflection_reflexive(self):
+        inflector = Inflector()
+        conjugations = [
+            ("je", "je me débrouillai"),
+            ("tu", "tu te débrouillas"),
+            ("il", "il se débrouilla"),
+            ("nous", "nous nous débrouillâmes"),
+            ("vous", "vous vous débrouillâtes"),
+            ("ils", "ils se débrouillèrent"),
+        ]
+        for subject, conjugation in conjugations:
+            with self.subTest(subject=subject):
+                s = Sentence()
+                p = add_subject_pronoun(s, subject)
+                r = add_reflexive_pronoun(s, p.id)
+                v = add_finite_verb(s, 'débrouiller', p.id, tense="passé simple", reflexive_pronoun_id=r.id)
                 inflector.inflect(s)
                 inflector.contract(s)
                 self.assertEqual(str(s), conjugation)
@@ -240,6 +320,28 @@ class Tests(unittest.TestCase):
                 inflector.contract(s)
                 self.assertEqual(str(s), conjugation)
 
+    def test_passé_composé_inflection_reflexive(self):
+        inflector = Inflector()
+        conjugations = [
+            ("je", "je me suis débrouillé"),
+            ("tu", "tu t'es débrouillé"),
+            ("il", "il s'est débrouillé"),
+            ("elle", "elle s'est débrouillée"),
+            ("nous", "nous nous sommes débrouillés"),
+            ("vous", "vous vous êtes débrouillé"),
+            ("ils", "ils se sont débrouillés"),
+            ("elles", "elles se sont débrouillées"),
+        ]
+        for subject, conjugation in conjugations:
+            with self.subTest(subject=subject):
+                s = Sentence()
+                p = add_subject_pronoun(s, subject)
+                r = add_reflexive_pronoun(s, p.id)
+                v = add_finite_verb(s, 'débrouiller', p.id, tense="passé composé", reflexive_pronoun_id=r.id)
+                inflector.inflect(s)
+                inflector.contract(s)
+                self.assertEqual(str(s), conjugation)
+
     def test_plus_que_parfait_inflection(self):
         inflector = Inflector()
         conjugations = [
@@ -255,6 +357,28 @@ class Tests(unittest.TestCase):
                 s = Sentence()
                 p = add_subject_pronoun(s, subject)
                 v = add_finite_verb(s, 'aimer', p.id, tense="plus-que-parfait")
+                inflector.inflect(s)
+                inflector.contract(s)
+                self.assertEqual(str(s), conjugation)
+
+    def test_plus_que_parfait_inflection_reflexive(self):
+        inflector = Inflector()
+        conjugations = [
+            ("je", "je m'étais débrouillé"),
+            ("tu", "tu t'étais débrouillé"),
+            ("il", "il s'était débrouillé"),
+            ("elle", "elle s'était débrouillée"),
+            ("nous", "nous nous étions débrouillés"),
+            ("vous", "vous vous étiez débrouillé"),
+            ("ils", "ils s'étaient débrouillés"),
+            ("elles", "elles s'étaient débrouillées"),
+        ]
+        for subject, conjugation in conjugations:
+            with self.subTest(subject=subject):
+                s = Sentence()
+                p = add_subject_pronoun(s, subject)
+                r = add_reflexive_pronoun(s, p.id)
+                v = add_finite_verb(s, 'débrouiller', p.id, tense="plus-que-parfait", reflexive_pronoun_id=r.id)
                 inflector.inflect(s)
                 inflector.contract(s)
                 self.assertEqual(str(s), conjugation)
@@ -278,6 +402,28 @@ class Tests(unittest.TestCase):
                 inflector.contract(s)
                 self.assertEqual(str(s), conjugation)
 
+    def test_futur_anterieur_inflection_reflexive(self):
+        inflector = Inflector()
+        conjugations = [
+            ("je", "je me serai débrouillé"),
+            ("tu", "tu te seras débrouillé"),
+            ("il", "il se sera débrouillé"),
+            ("elle", "elle se sera débrouillée"),
+            ("nous", "nous nous serons débrouillés"),
+            ("vous", "vous vous serez débrouillé"),
+            ("ils", "ils se seront débrouillés"),
+            ("elles", "elles se seront débrouillées"),
+        ]
+        for subject, conjugation in conjugations:
+            with self.subTest(subject=subject):
+                s = Sentence()
+                p = add_subject_pronoun(s, subject)
+                r = add_reflexive_pronoun(s, p.id)
+                v = add_finite_verb(s, 'débrouiller', p.id, tense="futur anterieur", reflexive_pronoun_id=r.id)
+                inflector.inflect(s)
+                inflector.contract(s)
+                self.assertEqual(str(s), conjugation)
+
     def test_passé_anterieur_inflection(self):
         inflector = Inflector()
         conjugations = [
@@ -297,6 +443,28 @@ class Tests(unittest.TestCase):
                 inflector.contract(s)
                 self.assertEqual(str(s), conjugation)
 
+    def test_passé_anterieur_inflection_reflexive(self):
+        inflector = Inflector()
+        conjugations = [
+            ("je", "je me fus débrouillé"),
+            ("tu", "tu te fus débrouillé"),
+            ("il", "il se fut débrouillé"),
+            ("elle", "elle se fut débrouillée"),
+            ("nous", "nous nous fûmes débrouillés"),
+            ("vous", "vous vous fûtes débrouillé"),
+            ("ils", "ils se furent débrouillés"),
+            ("elles", "elles se furent débrouillées"),
+        ]
+        for subject, conjugation in conjugations:
+            with self.subTest(subject=subject):
+                s = Sentence()
+                p = add_subject_pronoun(s, subject)
+                r = add_reflexive_pronoun(s, p.id)
+                v = add_finite_verb(s, 'débrouiller', p.id, tense="passé anterieur", reflexive_pronoun_id=r.id)
+                inflector.inflect(s)
+                inflector.contract(s)
+                self.assertEqual(str(s), conjugation)
+
     def test_conditionnel_présent_inflection(self):
         inflector = Inflector()
         conjugations = [
@@ -311,7 +479,27 @@ class Tests(unittest.TestCase):
             with self.subTest(subject=subject):
                 s = Sentence()
                 p = add_subject_pronoun(s, subject)
-                v = add_finite_verb(s, 'être', p.id, mood="conditionnel", tense="présent")
+                v = add_finite_verb(s, 'être', p.id, mood="conditionnel")
+                inflector.inflect(s)
+                inflector.contract(s)
+                self.assertEqual(str(s), conjugation)
+
+    def test_conditionnel_présent_inflection_reflexive(self):
+        inflector = Inflector()
+        conjugations = [
+            ("je", "je me débrouillerais"),
+            ("tu", "tu te débrouillerais"),
+            ("il", "il se débrouillerait"),
+            ("nous", "nous nous débrouillerions"),
+            ("vous", "vous vous débrouilleriez"),
+            ("ils", "ils se débrouilleraient"),
+        ]
+        for subject, conjugation in conjugations:
+            with self.subTest(subject=subject):
+                s = Sentence()
+                p = add_subject_pronoun(s, subject)
+                r = add_reflexive_pronoun(s, p.id)
+                v = add_finite_verb(s, 'débrouiller', p.id, mood="conditionnel", reflexive_pronoun_id=r.id)
                 inflector.inflect(s)
                 inflector.contract(s)
                 self.assertEqual(str(s), conjugation)
@@ -335,6 +523,28 @@ class Tests(unittest.TestCase):
                 inflector.contract(s)
                 self.assertEqual(str(s), conjugation)
 
+    def test_conditionnel_passé_inflection_reflexive(self):
+        inflector = Inflector()
+        conjugations = [
+            ("je", "je me serais débrouillé"),
+            ("tu", "tu te serais débrouillé"),
+            ("il", "il se serait débrouillé"),
+            ("elle", "elle se serait débrouillée"),
+            ("nous", "nous nous serions débrouillés"),
+            ("vous", "vous vous seriez débrouillé"),
+            ("ils", "ils se seraient débrouillés"),
+            ("elles", "elles se seraient débrouillées"),
+        ]
+        for subject, conjugation in conjugations:
+            with self.subTest(subject=subject):
+                s = Sentence()
+                p = add_subject_pronoun(s, subject)
+                r = add_reflexive_pronoun(s, p.id)
+                v = add_finite_verb(s, 'débrouiller', p.id, mood="conditionnel", tense="passé", reflexive_pronoun_id=r.id)
+                inflector.inflect(s)
+                inflector.contract(s)
+                self.assertEqual(str(s), conjugation)
+
     def test_subjonctif_présent_inflection(self):
         inflector = Inflector()
         conjugations = [
@@ -349,12 +559,32 @@ class Tests(unittest.TestCase):
             with self.subTest(subject=subject):
                 s = Sentence()
                 p = add_subject_pronoun(s, subject)
-                v = add_finite_verb(s, 'être', p.id, mood="subjonctif", tense="présent")
+                v = add_finite_verb(s, 'être', p.id, mood="subjonctif")
                 inflector.inflect(s)
                 inflector.contract(s)
                 self.assertEqual(str(s), conjugation)
 
-    def test_conditionnel_passé_inflection(self):
+    def test_subjonctif_présent_inflection_reflexive(self):
+        inflector = Inflector()
+        conjugations = [
+            ("je", "je me débrouille"),
+            ("tu", "tu te débrouilles"),
+            ("il", "il se débrouille"),
+            ("nous", "nous nous débrouillions"),
+            ("vous", "vous vous débrouilliez"),
+            ("ils", "ils se débrouillent"),
+        ]
+        for subject, conjugation in conjugations:
+            with self.subTest(subject=subject):
+                s = Sentence()
+                p = add_subject_pronoun(s, subject)
+                r = add_reflexive_pronoun(s, p.id)
+                v = add_finite_verb(s, 'débrouiller', p.id, mood="subjonctif", reflexive_pronoun_id=r.id)
+                inflector.inflect(s)
+                inflector.contract(s)
+                self.assertEqual(str(s), conjugation)
+
+    def test_subjonctif_passé_inflection(self):
         inflector = Inflector()
         conjugations = [
             ("je", "j'aie aimé"),
@@ -369,6 +599,28 @@ class Tests(unittest.TestCase):
                 s = Sentence()
                 p = add_subject_pronoun(s, subject)
                 v = add_finite_verb(s, 'aimer', p.id, mood="subjonctif", tense="passé")
+                inflector.inflect(s)
+                inflector.contract(s)
+                self.assertEqual(str(s), conjugation)
+
+    def test_subjonctif_passé_inflection_reflexive(self):
+        inflector = Inflector()
+        conjugations = [
+            ("je", "je me sois débrouillé"),
+            ("tu", "tu te sois débrouillé"),
+            ("il", "il se soit débrouillé"),
+            ("elle", "elle se soit débrouillée"),
+            ("nous", "nous nous soyons débrouillés"),
+            ("vous", "vous vous soyez débrouillé"),
+            ("ils", "ils se soient débrouillés"),
+            ("elles", "elles se soient débrouillées"),
+        ]
+        for subject, conjugation in conjugations:
+            with self.subTest(subject=subject):
+                s = Sentence()
+                p = add_subject_pronoun(s, subject)
+                r = add_reflexive_pronoun(s, p.id)
+                v = add_finite_verb(s, 'débrouiller', p.id, mood="subjonctif", tense="passé", reflexive_pronoun_id=r.id)
                 inflector.inflect(s)
                 inflector.contract(s)
                 self.assertEqual(str(s), conjugation)
