@@ -34,7 +34,7 @@ class Inflector(structure.Sentence):
         while i < len(sentence.tokens) - 1:
             token = sentence.tokens[i]
             next_token = sentence.tokens[i + 1]
-            if isinstance(token, structure.Word) and isinstance(next_token, structure.Word) and str(token) in ["je", "me", "te", "se", "le", "la"] and causes_elision_in_preceding_word(str(next_token)):
-                token.inflection = token.inflection[0]
+            if isinstance(token, structure.Word) and isinstance(next_token, structure.Word) and str(token) in ["je", "me", "te", "se", "le", "la", "que"] and causes_elision_in_preceding_word(str(next_token)):
+                token.inflection = token.inflection[0:-1]
                 sentence.tokens.insert(i + 1, "'")
             i += 1
