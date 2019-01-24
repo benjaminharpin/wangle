@@ -1,6 +1,6 @@
 verbs_that_conjugate_with_etre = [
     "devenir", 
-    "revenir,",
+    "revenir",
     "monter",
     "rester",
     "sortir",

@@ -85,7 +85,7 @@ class Tests(unittest.TestCase):
         ]
         vandertramp_lemmas = [
             "devenir", 
-            "revenir,",
+            "revenir",
             "monter",
             "rester",
             "sortir",
